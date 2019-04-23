@@ -27,7 +27,10 @@ if __name__ == "__main__":
     vert_comp, comp_count, main_comp = component(mat)
     print(vert_comp)
     print(comp_count)
-    print(comp_count[main_comp] / cnt * 100, '%\n')
+    print(comp_count[main_comp] / cnt * 100, '%')
+    strong_comp, strong_count = strong_component(mat)
+    print(strong_comp)
+    print(strong_count, '\n')
 
     # Exclude everything but main component
     new_idx = {}

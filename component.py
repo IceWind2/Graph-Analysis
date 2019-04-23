@@ -1,15 +1,32 @@
 components = []
 marked = []
+vert_time = []
+deleted = []
+time = 0
 
 
 def dfs(v, mat, color):
-    global marked, components
+    global marked, components, deleted
     marked[v] = True
-    components[v] = color
+    if color != -1:
+        components[v] = color
     for e in mat[v]:
         if not marked[e]:
+            if len(deleted) > 0 and deleted[e]:
+                continue
             dfs(e, mat, color)
+
     return
+
+
+def inverted_dfs(v, mat):
+    global marked, deleted, time
+    marked[v] = True
+    for i in range(len(mat)):
+        if not deleted[i] and v in mat[i] and not marked[i]:
+            inverted_dfs(i, mat)
+    vert_time[v] = time
+    time += 1
 
 
 def component(matrix):
@@ -38,3 +55,35 @@ def component(matrix):
             max_comp = i
 
     return components, comp_count, max_comp
+
+
+def strong_component(matrix):
+    global marked, vert_time, deleted, time
+    cnt = len(matrix)
+    deleted = [False] * cnt
+    colors = [-1] * cnt
+    color = 0
+    while False in deleted:
+        marked = [False] * cnt
+        vert_time = [0] * cnt
+        time = 1
+        for i in range(cnt):
+            if not deleted[i] and not marked[i]:
+                inverted_dfs(i, matrix)
+
+        marked = [False] * cnt
+        dfs(vert_time.index(max(vert_time)), matrix, -1)
+        for i in range(cnt):
+            if marked[i]:
+                deleted[i] = True
+                colors[i] = color
+        color += 1
+
+    color_count = {}
+    for q in colors:
+        if q in color_count:
+            color_count[q] += 1
+        else:
+            color_count[q] = 1
+
+    return colors, color_count

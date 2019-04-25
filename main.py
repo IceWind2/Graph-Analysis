@@ -1,6 +1,7 @@
 from component import *
 from input import *
 from paths import *
+from similarity import *
 import matplotlib.pyplot as plt
 
 
@@ -72,3 +73,10 @@ if __name__ == "__main__":
     vert_dist = calculate_paths(mat)
     vert_dist.show()
     print([id_person[idx].attrib['label'] for idx in [old_idx[el] for el in vert_dist.central_vertices]])
+
+    # -------------------------------------TASK 3-------------------------------------
+    print('TASK 3')
+
+    sim = similarity_measures(mat)
+    print(*sim.neighbors, sep='\n')
+    print(id_person[old_idx[13]].attrib['label'])

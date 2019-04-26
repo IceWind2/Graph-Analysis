@@ -5,7 +5,7 @@ from similarity import *
 import matplotlib.pyplot as plt
 
 
-def degrees(matrix):
+def get_degrees(matrix):
     deg = {}
     for person in matrix:
         if len(person) not in deg:
@@ -25,11 +25,11 @@ if __name__ == "__main__":
     print('TASK 1')
 
     # Calculate components
-    vert_comp, comp_count, main_comp = component(mat)
+    vert_comp, comp_count, main_comp = get_components(mat)
     print(vert_comp)
     print(comp_count)
     print(comp_count[main_comp] / cnt * 100, '%')
-    strong_comp, strong_count = strong_component(mat)
+    strong_comp, strong_count = get_strong_components(mat)
     print(strong_comp)
     print(strong_count, '\n')
 
@@ -55,22 +55,22 @@ if __name__ == "__main__":
     cnt = len(mat)
 
     for i in range(cnt):
-        for q in range(len(mat[i])):
-            if mat[i][q] not in mat[mat[i][q]]:
-                mat[mat[i][q]].append(i)
+        for p in mat[i]:
+            if i not in mat[p]:
+                mat[p].append(i)
 
     # -------------------------------------TASK 2-------------------------------------
     print('TASK 2')
 
     # Calculate vertex degree distribution
-    degree_count = degrees(mat)
+    degree_count = get_degrees(mat)
     plt.hist(list(degree_count.keys()), weights=[i / cnt for i in degree_count.values()], bins=max(list(degree_count)), rwidth=0.65, align='left')
     plt.xlabel('degree')
     plt.ylabel('probability')
     plt.savefig('degree distribution.png')
 
     # Calculate distance parameters
-    vert_dist = calculate_paths(mat)
+    vert_dist = get_description(mat)
     vert_dist.show()
     print([id_person[idx].attrib['label'] for idx in [old_idx[el] for el in vert_dist.central_vertices]])
 

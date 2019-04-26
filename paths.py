@@ -1,16 +1,64 @@
-class Graph_Description:
-
+class GraphDescription:
     def __init__(self):
         self.radius = None
         self.diameter = None
         self.central_vertices = []
-        self.periferal_vertices = []
+        self.peripheral_vertices = []
         self.mean_path_length = None
+        self.distances = []
+
+    def __calculate_distances(self, matrix):
+        # TODO: replace custom queue with built in
+        q = queue()
+        n = len(matrix)
+        vert_dist = []
+
+        for i in range(n):
+            marked = [False] * n
+            marked[i] = True
+            q.push(i)
+            dist = -1
+            cur_dist = [0] * n
+
+            while q.top() is not None:
+                dist += 1
+                q2 = queue()
+                while q.top() is not None:
+                    cur_vert = q.top()
+                    cur_dist[cur_vert] = dist
+                    marked[cur_vert] = True
+
+                    for j in range(len(matrix[cur_vert])):
+                        if not marked[matrix[cur_vert][j]]:
+                            q2.push(matrix[cur_vert][j])
+                            marked[matrix[cur_vert][j]] = True
+                    q.pop()
+
+                for el in q2.items():
+                    q.push(el)
+
+            vert_dist.append(cur_dist)
+
+        self.distances = vert_dist
 
     def show(self):
         print("min dist ", self.radius, ': ', self.central_vertices)
-        print("max dist ", self.diameter, ': ', self.periferal_vertices)
+        print("max dist ", self.diameter, ': ', self.peripheral_vertices)
         print("mean dist ", self.mean_path_length)
+
+    def create_description(self, matrix):
+        self.__calculate_distances(matrix)
+        self.radius = min([max(person) for person in self.distances])
+        self.diameter = max([max(person) for person in self.distances])
+        self.central_vertices = [i for i in range(len(self.distances)) if max(self.distances[i]) == self.radius]
+        self.peripheral_vertices = [i for i in range(len(self.distances)) if max(self.distances[i]) == self.diameter]
+        self.mean_path_length = mean([mean(person) for person in self.distances])
+
+
+def get_description(matrix):
+        result = GraphDescription()
+        result.create_description(matrix)
+        return result
 
 
 class queue:
@@ -39,43 +87,5 @@ class queue:
         return [*self._q]
 
 
-def mean(list):
-    return sum(list) / len(list)
-
-
-def calculate_paths(matrix):
-    q = queue()
-    N = len(matrix)
-    vert_dist = []
-
-    for i in range(N):
-        marked = [False] * N
-        marked[i] = True
-        q.push(i)
-        dist = -1
-
-        while q.top() is not None:
-            dist += 1
-            q2 = queue()
-            while q.top() is not None:
-                tmp = q.top()
-                marked[tmp] = True
-                for j in range(len(matrix[tmp])):
-                    if not marked[matrix[tmp][j]]:
-                        q2.push(matrix[tmp][j])
-                        marked[matrix[tmp][j]] = True
-                q.pop()
-
-            for el in q2.items():
-                q.push(el)
-
-        vert_dist.append(dist)
-
-    result = Graph_Description()
-    result.radius = min(vert_dist)
-    result.diameter = max(vert_dist)
-    result.central_vertices = [i for i in range(N) if vert_dist[i] == result.radius]
-    result.periferal_vertices = [i for i in range(N) if vert_dist[i] == result.diameter]
-    result.mean_path_length = mean(vert_dist)
-
-    return result
+def mean(l):
+    return sum(l) / len(l)

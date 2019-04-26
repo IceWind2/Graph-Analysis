@@ -29,7 +29,7 @@ def inverted_dfs(v, mat):
     time += 1
 
 
-def component(matrix):
+def get_components(matrix):
     global marked, components
     cnt = len(matrix)
     marked = [False] * cnt
@@ -57,7 +57,7 @@ def component(matrix):
     return components, comp_count, max_comp
 
 
-def strong_component(matrix):
+def get_strong_components(matrix):
     global marked, vert_time, deleted, time
     cnt = len(matrix)
     deleted = [False] * cnt
